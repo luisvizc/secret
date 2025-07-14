@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cifrador Secreto Personalizado</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 20px;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #4CAF50; /* Verde */
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 80px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007bff; /* Azul */
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #output {
+            margin-top: 25px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            min-height: 50px;
+            word-wrap: break-word; /* Para que el texto largo no desborde */
+        }
+        .warning {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .info {
+            font-size: 0.9em;
+            color: #555;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cifrador Secreto Personalizado</h1>
+        <div class="warning">
+            ¡ADVERTENCIA! Esta herramienta usa tu clave secreta. No la uses en una web pública.
+            Guarda este archivo HTML en tu teléfono y úsalo sin conexión a internet si te preocupa la privacidad.
+        </div>
+
+        <label for="inputText">Introduce tu mensaje (Cifrar) o números (Descifrar):</label>
+        <textarea id="inputText" placeholder="Escribe aquí tu mensaje..."></textarea>
+
+        <button onclick="cifrar()">Cifrar Mensaje</button>
+        <button onclick="descifrar()">Descifrar Mensaje</button>
+
+        <label for="output">Resultado:</label>
+        <textarea id="output" readonly></textarea>
+
+        <div class="info">
+            Este cifrador usa una tabla de sustitución personalizada.
+            La clave está incrustada en el código de este archivo.
+            Asegúrate de que tus amigos tengan este mismo archivo para poder descifrar.
+            <br><br>
+            ¡Recuerda que el ESPACIO también tiene su número asignado!
+        </div>
+    </div>
+
+    <script>
+        // *** TU CLAVE SECRETA PERSONALIZADA VA AQUÍ ***
+        // ¡CAMBIA ESTOS VALORES POR LOS TUYOS!
+        // Asegúrate de que cada número del 0 al 26 aparece UNA SOLA VEZ.
+        // El ESPACIO se representa con ' ' (un espacio simple).
+        const encryptionKey = {
+            'A': '11', 'B': '2', 'C': '24', 'D': '17', 'E': '0',
+            'F': '15', 'G': '9', 'H': '22', 'I': '5', 'J': '20',
+            'K': '3', 'L': '18', 'M': '13', 'N': '26', 'O': '7',
+            'P': '1', 'Q': '12', 'R': '25', 'S': '4', 'T': '21',
+            'U': '6', 'V': '10', 'W': '19', 'X': '14', 'Y': '16',
+            'Z': '8', ' ': '23' // Importante: el espacio también tiene su número
+        };
+
+        // Creamos la clave de descifrado a partir de la de cifrado para facilitar el proceso inverso
+        const decryptionKey = {};
+        for (const char in encryptionKey) {
+            decryptionKey[encryptionKey[char]] = char;
+        }
+
+        function cifrar() {
+            let inputText = document.getElementById('inputText').value.toUpperCase(); // Convertir a mayúsculas
+            let encryptedMessage = [];
+
+            for (let i = 0; i < inputText.length; i++) {
+                let char = inputText[i];
+                if (encryptionKey[char] !== undefined) {
+                    encryptedMessage.push(encryptionKey[char]);
+                } else {
+                    // Si el caracter no está en la clave (ej. números, símbolos, acentos), se ignora.
+                    // Para depuración, podríamos poner: console.log("Caracter no encontrado:", char);
+                }
+            }
+            document.getElementById('output').value = encryptedMessage.join('-');
+        }
+
+        function descifrar() {
+            let inputText = document.getElementById('inputText').value;
+            // Quitamos cualquier espacio extra antes de dividir, y luego dividimos por guiones.
+            let numbers = inputText.trim().split('-');
+            let decryptedMessage = [];
+
+            for (let i = 0; i < numbers.length; i++) {
+                let num = numbers[i].trim(); // Eliminar espacios extra de cada número
+                if (decryptionKey[num] !== undefined) {
+                    decryptedMessage.push(decryptionKey[num]);
+                } else {
+                    // Si el número no está en la clave, se añade un '?' para indicar un error o caracter desconocido.
+                    // Para depuración, podríamos poner: console.log("Número no encontrado:", num);
+                    decryptedMessage.push('?');
+                }
+            }
+            document.getElementById('output').value = decryptedMessage.join('');
+        }
+    </script>
+</body>
+</html>
